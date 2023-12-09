@@ -1,7 +1,9 @@
 const express = require('express');
 
+
 const app = express();
 const path = require('path');
+const socket = require('socket.io');
 
 const messages = [];
 
@@ -11,6 +13,8 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '/client/index.html'));
 });
 
-app.listen(8000, () => {
+const server = app.listen(8000, () => {
     console.log('Server is running on port 8000');
 });
+
+const io = socket(server);

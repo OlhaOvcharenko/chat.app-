@@ -22,26 +22,34 @@ const io = socket(server);
 io.on('connection', (socket) => {
   console.log('New client! Its id – ' + socket.id);
 
+  socket.on('join', (user) => {
+    console.log('User ' + socket.id + ' logged in');
+    users.push(user);
+    console.log('All users', users);
+  
+    const message = `${user.userName} has joined the conversation!`;
+  
+    socket.broadcast.emit('newUser', { author: 'Chat Bot', content: message });
+  });
+
   socket.on('message', (message) => {
     console.log('Oh, I\'ve got something from ' + socket.id);
     messages.push(message);
     socket.broadcast.emit('message', message);
   });
 
-  socket.on('join', (user) => {
-    console.log('User ' + socket.id + ' logged in');
-    users.push(user);
-    console.log('All users', users);
-  });
 
   socket.on('disconnect', () => { 
-    const userIndex = users.findIndex(user => user.id === socket.id);
-    if (userIndex !== -1) {
-      users.splice(userIndex, 1);
+    const userLeft = users.findIndex(user => user.id === socket.id);
+    if (userLeft !== -1) {
+      const userLogin = users[userLeft].userName; // Adjust the property name if needed
+      users.splice(userLeft, 1);
+      console.log('Oh, socket ' + socket.id + ' has left');
+      console.log('All users', users);
+  
+      const message = `${userLogin} has left.`;
+      socket.broadcast.emit('removeUser', { author: 'Chat Bot', content: message});
     }
-    console.log('Oh, socket ' + socket.id + ' has left') 
-    console.log('All users', users);
-    
   });
   
 

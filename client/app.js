@@ -18,6 +18,7 @@ function login(e){
     alert('Field is empty, please enter your name!');
   } else {
     userName = userNameInput.value;
+    socket.emit('join', { user: userName, id: socket.id})
     loginForm.classList.remove('show');
     messagesSection.classList.add('show');
   }

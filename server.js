@@ -5,6 +5,7 @@ const app = express();
 const path = require('path');
 
 const messages = [];
+const users = [];
 
 app.use(express.static(path.join(__dirname, '/client/'))); 
 
@@ -27,4 +28,23 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('message', message);
   });
 
+  socket.on('join', (user) => {
+    console.log('User ' + socket.id + ' logged in');
+    users.push(user);
+    console.log('All users', users);
+  });
+
+  socket.on('disconnect', () => { 
+    const userIndex = users.findIndex(user => user.id === socket.id);
+    if (userIndex !== -1) {
+      users.splice(userIndex, 1);
+    }
+    console.log('Oh, socket ' + socket.id + ' has left') 
+    console.log('All users', users);
+    
+  });
+  
+
 });
+
+

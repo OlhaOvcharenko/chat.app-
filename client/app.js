@@ -9,9 +9,6 @@ const socket = io();
 
 socket.on('message', ({ author, content }) => addMessage(author, content));
 
-
-
-
 let userName = '';
 
 function login(e){
@@ -42,19 +39,22 @@ function sendMessage(e) {
 }
 
 function addMessage(author, content) {
-  const message = document.createElement('li');
-  message.classList.add('message');
-  message.classList.add('message--received');
-  if (author === userName) {
-    message.classList.add('message--self');
+    const message = document.createElement('li');
+    message.classList.add('message');
+    message.classList.add('message--received');
+  
     message.innerHTML = `
-    <h3 class="message__author">${userName === author ? 'You' : author }</h3>
-    <div class="message__content">
-      ${content}
-    </div>
+      <h3 class="message__author">${userName === author ? 'You' : author }</h3>
+      <div class="message__content">
+        ${content}
+      </div>
     `;
+  
+    if (userName === author) {
+      message.classList.add('message--self');
+    }
+  
     messagesList.appendChild(message);
-  }
 }
 
 loginForm.addEventListener('submit', (event) => login(event));

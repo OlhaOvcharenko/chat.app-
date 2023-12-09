@@ -5,9 +5,16 @@ const addMessageForm = document.querySelector('#add-messages-form');
 const userNameInput = document.querySelector('#username');
 const messageContentInput = document.querySelector('#message-content');
 
+const socket = io();
+
+socket.on('message', ({ author, content }) => addMessage(author, content));
+
+
+
+
 let userName = '';
 
-const login = (e) => {
+function login(e){
   e.preventDefault();
 
   if (userNameInput.value === '') {
@@ -19,14 +26,19 @@ const login = (e) => {
   }
 }
 
-const sendMessage = (e) => {
-  e.preventDefault(); // Prevent the default form submission behavior
-  if (messageContentInput.value === '') {
-    alert('Field is empty, please enter your message!');
+function sendMessage(e) {
+  e.preventDefault();
+
+  let messageContent = messageContentInput.value;
+
+  if(!messageContent.length) {
+    alert('You have to type something!');
   } else {
-    addMessage(userName, messageContentInput.value);
+    addMessage(userName, messageContent);
+    socket.emit('message', { author: userName, content: messageContent })
     messageContentInput.value = '';
   }
+
 }
 
 function addMessage(author, content) {
